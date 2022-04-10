@@ -17,6 +17,7 @@ for line in handle:
 #put the value in to a pare and sort it.
 for k,v in time_d.items():
   time.append((k,v))
+
 time.sort()
 
 for k,v in time:

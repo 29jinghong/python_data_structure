@@ -37,4 +37,3 @@ while True:
         continue
 
     print(js['results'][0]['place_id'])
-    

@@ -38,16 +38,19 @@ if len(fname) < 1:
 #   [ "Charley", "si110", 1 ],
 #   [ "Mea", "si110", 0 ],
 # ]
+
 str_data = open(fname).read()
 json_data = json.loads(str_data)
 #reades the file and turnes it into a json data that can be used
 
 for entry in json_data:
-
+#can only do iteration if its an array or iterable(dict, list).
     name = entry[0]
     title = entry[1]
+    number = entry[2]
 
     print((name, title))
+    print(type(number))
 
     cur.execute('''INSERT OR IGNORE INTO User (name)
         VALUES ( ? )''', ( name, ) )

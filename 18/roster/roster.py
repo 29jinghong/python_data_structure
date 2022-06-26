@@ -49,8 +49,7 @@ for entry in json_data:
     title = entry[1]
     number = entry[2]
 
-    print((name, title))
-    print(type(number))
+    print((name, title, number))
 
     cur.execute('''INSERT OR IGNORE INTO User (name)
         VALUES ( ? )''', ( name, ) )
@@ -63,7 +62,7 @@ for entry in json_data:
     course_id = cur.fetchone()[0]
 
     cur.execute('''INSERT OR REPLACE INTO Member
-        (user_id, course_id) VALUES ( ?, ? )''',
-        ( user_id, course_id ) )
+        (user_id, course_id, role) VALUES ( ?, ? , ?)''',
+        ( user_id, course_id, number) )
 
     conn.commit()

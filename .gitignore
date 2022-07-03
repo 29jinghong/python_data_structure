@@ -1,2 +1,4 @@
 .DS_Store
-.sqlite
+*.sqlite
+*.sqbpro
+*.sqlite-journal

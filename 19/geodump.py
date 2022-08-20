@@ -43,7 +43,9 @@ for row in cur :
     lng = js["results"][0]["geometry"]["location"]["lng"]
     #gets the lat and the lng by going throw js^
 
-    if lat == 0 or lng == 0 : continue
+    if lat == 0 or lng == 0 :
+        continue
+
     where = js['results'][0]['formatted_address']
     #gets the formatted address from js^
 
@@ -56,7 +58,8 @@ for row in cur :
         count = count + 1
         #addes one count to count
 
-        if count > 1 : fhand.write(",\n")
+        if count > 1 :
+            fhand.write(",\n")
         #if there is more than one line it will add a \n to make a new line so it doest blow up
         #also thats how the json format works.
 

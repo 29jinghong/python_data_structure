@@ -28,7 +28,7 @@ allLis = resultDiv.find_all("li")
 #print(allLis)
 
 for li in allLis:
-    aTag = li.find("a")   #same as li.find("a")
+    aTag = li.find("a")
     foodUrl = url + aTag.get("href", None)
     print(foodUrl)
 

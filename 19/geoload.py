@@ -21,6 +21,7 @@ else :
 
 conn = sqlite3.connect('geodata.sqlite')
 cur = conn.cursor()
+#connects to the geodata.sqlite wich is created by geodump
 
 cur.execute('''
 CREATE TABLE IF NOT EXISTS Locations (address TEXT, geodata TEXT)''')

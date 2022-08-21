@@ -1,0 +1,5 @@
+first step its web crowling or spidering.
+onece you have the data you do index building.
+in index building you look at all the pages and check which are most centered of all the pages and what is likned to alot of links.
+there is a file called robot.txt that tells search engin where to look in a url/domain and where to not look.
+in index building you look at how many words are containd, and how many link its pointing to, to see which link is the most important.

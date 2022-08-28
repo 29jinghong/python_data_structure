@@ -34,8 +34,9 @@ for li in allLis:
 
     span = aTag.find("span")
     print(span.text)
+    #span.replace("'", " ")
     print()
-    cur.execute('INSERT INTO foods (name, url) VALUES (?, ?)', (span.text,foodUrl))
+    cur.execute('INSERT INTO foods (name, url) VALUES (?, ?)', (span.text.replace("'", " "),foodUrl))
 
 conn.commit()
 cur.close()

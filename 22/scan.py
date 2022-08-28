@@ -1,4 +1,6 @@
+from contextlib import nullcontext
 import urllib.request, urllib.parse, urllib.error
+from xml.dom.expatbuilder import FilterVisibilityController
 from bs4 import BeautifulSoup
 import ssl
 import sqlite3
@@ -11,13 +13,10 @@ ctx.verify_mode = ssl.CERT_NONE
 conn = sqlite3.connect('foodfacts.sqlite')
 cur = conn.cursor()
 
-conn2 = sqlite3.connect('fooddata.sqlite')
-cur2 = conn2.cursor()
+cur.execute('''DROP TABLE IF EXISTS data''')
 
-cur2.execute('''DROP TABLE IF EXISTS data''')
-
-cur2.execute('''CREATE TABLE IF NOT EXISTS data
-    (id INTEGER PRIMARY KEY, 
+cur.execute('''CREATE TABLE IF NOT EXISTS data
+    (foodId INTEGER, 
     energy TEXT, 
     fat TEXT,
     carbohydrates TEXT,
@@ -25,23 +24,28 @@ cur2.execute('''CREATE TABLE IF NOT EXISTS data
     proteins TEXT,
     salt Text)''')
 
-#cur.execute('SELECT COUNT(*) FROM foods')
-#num = cur.fetchone
-num = 1
-while True:
-    cur.execute('SELECT id,name,url FROM foods WHERE id=?', (num,))
-    try:
-        row = cur.fetchone()
-        id = row[0]
-        name = row[1]
-        url = row[2]
-    except:
-        print('the end')
-        many = 0
-        break
-    print("-------id,name,url-------")
-    print(id," ", name, " ", url)
-    num = num + 1
+# cur.execute('select count(*) FROM foods')
+# num = cur.fetchone
+# print(num())
+propertyPrefix = 'food:'
+propertySuffix = 'Per100g'
+foodData = []
+
+def retrieve(what):
+    td = soup.find("td", attrs = {"property" : propertyPrefix + what + propertySuffix})
+    if (td != None):
+        return td.get('content')
+    else:
+        return "?"
+
+allRows = cur.execute('SELECT id,url FROM foods')
+for row in allRows:
+    foodId = int(row[0])
+    url = row[1]
+
+    print("-------food id,url-------")
+    print("food id: ", foodId)
+    print("url: ", url)
 
     try:
         document = urlopen(url, context=ctx)
@@ -57,96 +61,51 @@ while True:
         conn.commit()
         continue
 
-    tags = soup('a')
-
     #-----getting energy-----
-    try:
-        
-        energyt = soup.find("td", attrs = {"property" : "food:energyPer100g"})
-        #print("-----energyt-----")
-        #print(energyt)
-        energy = energyt.get("content")
-        print("-----energy-----")
-        print(energy)
-        print("-----energy-----")
-        print("cant find energy")
-        energy = "?"
-    except:
-        print("-----energy-----")
-        print("cant find energy")
-        energy = "?"
-        
+    print("-----getting energy-----")
+    energy = retrieve("energy")
+    print(energy)
+
     #-----getting fat-----
-    try:
-        fatt = soup.find("td", attrs = {"property" : "food:fatPer100g"})
-        #print("-----fatt-----")
-        #print(fatt)
-        fat = fatt.get("content")
-        print("-----fat-----")
-        print(fat)
-    except:
-        print("-----fat-----")
-        print("cant find fat")
-        fat = "?"
+    print("-----getting fat-----")
+    fat = retrieve("fat")
+    print(fat)
 
     #-----getting carbohydrates-----
-    try:
-        carbohydratest = soup.find("td", attrs = {"property" : "food:carbohydratesPer100g"})
-        #print("-----carbohydratest-----")
-        #print(carbohydratest)
-        carbohydrates = carbohydratest.get("content")
-        print("-----carbohydrates-----")
-        print(carbohydrates)
-    except:
-        print("-----carbohydrates-----")
-        print("cant find carbohydrates")
-        carbohydrates = "?" 
+    print("-----getting carbohydrates-----")
+    carbohydrates = retrieve("carbohydrates")
+    print(carbohydrates)
 
     #-----getting fiber-----
-    try:
-        fibert = soup.find("td", attrs = {"property" : "food:fiberPer100g"})
-        #print("-----fibert-----")
-        #print(fibert)
-        fiber = fibert.get("content")
-        print("-----fiber-----")
-        print(fiber)
-    except:
-        print("-----fiber-----")
-        print("cant find fiber")
-        fiber = "?"
+    print("-----getting fiber-----")
+    fiber = retrieve("fiber")
+    print(fiber)
 
     #-----getting proteins-----
-    try:
-        proteinst = soup.find("td", attrs = {"property" : "food:proteinsPer100g"})
-        #print("-----proteinst-----")
-        #print(proteinst)
-        proteins = proteinst.get("content")
-        print("-----proteins-----")
-        print(proteins)
-    except:
-        print("-----proteins-----")
-        print("cant find proteins")
-        proteins = "?"
+    print("-----getting proteins-----")
+    proteins = retrieve("proteins")
+    print(proteins)
 
     #-----getting salt-----
-    try:
-        saltt = soup.find("td", attrs = {"property" : "food:saltPer100g"})
-        #print("-----saltt-----")
-        #print(saltt)
-        salt = saltt.get("content")
-        print("-----salt-----")
-        print(salt)
-    except:
-        print("-----salt-----")
-        print("cant find salt")
-        salt = "?"
-    
-    cur2.execute('INSERT INTO data (energy, fat, carbohydrates, fiber, proteins, salt) VALUES (?, ?, ?, ?, ?, ?)', (energy, fat, carbohydrates, fiber, proteins, salt))
-    conn2.commit()
+    print("-----getting salt-----")
+    salt = retrieve("salt")
+    print(salt)
 
-conn2.commit()
+    #intserting 
+    foodData.append( (foodId, energy, fat, carbohydrates, fiber, proteins, salt) )
+
+#only need to look at this 
+#inserting into data table
+for facts in foodData:
+    print(facts[0])
+    print(facts[1])
+    print(facts[2])
+    print(facts[3])
+    print(facts[4])
+    print(facts[5])
+    print(facts[6])
+    cur.execute('INSERT INTO data (foodId, energy, fat, carbohydrates, fiber, proteins, salt) VALUES (?, ?, ?, ?, ?, ?, ?)', (facts[0], facts[1], facts[2], facts[3], facts[4], facts[5], facts[6]))
+   
 conn.commit()
 cur.close()
 conn.close()
-cur2.close()
-conn2.close()

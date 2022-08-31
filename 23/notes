@@ -1,2 +1,0 @@
-make a function to covert string to num to chatch exeption and if qusetionmark return -99999
-because python is dinimic type try to return number if exeption return "?"

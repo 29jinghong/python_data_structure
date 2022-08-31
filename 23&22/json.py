@@ -11,7 +11,7 @@ cur.execute('''SELECT data.foodId, foods.name, data.energy, data.fat, data.carbo
 
 def check(data):
     if data == "?" :
-        return 0
+        return -9999
     else:
         return data
 

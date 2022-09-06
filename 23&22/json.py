@@ -9,12 +9,6 @@ cur.execute('''SELECT data.foodId, foods.name, data.energy, data.fat, data.carbo
     FROM foods JOIN data ON foods.id = data.foodId
     ''')
 
-def check(data):
-    if data == "?" :
-        return -9999
-    else:
-        return data
-
 fhand = open('food.js','w')
 
 count = 0
@@ -26,9 +20,9 @@ for row in cur :
     if count > 0 :
         fhand.write(',\n')
     fhand.write('{' + '"foodId":' + str(row[0]) + ',"name":"' + str(row[1]) + '",')
-    fhand.write(' "energy":"' + str(check(row[2])) + '", "fat":"' + str(check(row[3])) + '", "carbohydrates":"' + str(check(row[4])) + '",')
-    fhand.write(' "fiber":"' + str(check(row[5])) + '","proteins":"' + str(check(row[6])) + '","salt":"'+str(check(row[7])) + '",')
-    fhand.write(' "url":"' + str(check(row[8])) + '"}')
+    fhand.write(' "energy":' + str(row[2]) + ', "fat":' + str(row[3]) + ', "carbohydrates":' + str(row[4]) + ',')
+    fhand.write(' "fiber":' + str(row[5]) + ',"proteins":' + str(row[6]) + ',"salt":'+str(row[7]) + ',')
+    fhand.write(' "url":"' + str(row[8]) + '"}')
     count = count + 1
 
 fhand.write('\n]\n};')

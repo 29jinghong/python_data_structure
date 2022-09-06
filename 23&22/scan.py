@@ -36,7 +36,7 @@ def retrieve(what):
     if (td != None):
         return td.get('content')
     else:
-        return "?"
+        return 0
 
 allRows = cur.execute('SELECT id,url FROM foods')
 for row in allRows:
